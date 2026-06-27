@@ -251,6 +251,22 @@
       }
     },
     {
+      "type": "hysteria2",
+      "tag": "DE-HY",
+      "server": "23.88.45.150",
+      "server_port": 36500,
+      "password": "de6b9bbf95152e01487528ace985ec25",
+      "obfs": {
+        "type": "salamander",
+        "password": "906caf1686726648fca71697b531f8b5"
+      },
+      "tls": {
+        "enabled": true,
+        "insecure": true,
+        "server_name": "www.microsoft.com"
+      }
+    },
+    {
       "type": "vless",
       "tag": "SE-1",
       "server": "172.232.141.118",
@@ -311,6 +327,7 @@
         "SE-1",
         "SE-CDN",
         "DE-CDN",
+        "DE-HY",
         "DE-SS 🇩🇪"
       ],
       "default": "auto"
