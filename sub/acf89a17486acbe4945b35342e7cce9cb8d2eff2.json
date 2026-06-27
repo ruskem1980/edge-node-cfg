@@ -307,9 +307,14 @@
       "type": "urltest",
       "tag": "auto",
       "outbounds": [
-        "SE-4",
+        "SE-CDN",
+        "DE-CDN",
+        "SE-1",
         "SE-2",
-        "DE-2 🇩🇪"
+        "SE-4",
+        "DE-HY",
+        "DE-2 🇩🇪",
+        "DE-SS 🇩🇪"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -321,13 +326,13 @@
       "tag": "proxy",
       "outbounds": [
         "auto",
-        "SE-4",
-        "SE-2",
-        "DE-2 🇩🇪",
-        "SE-1",
         "SE-CDN",
         "DE-CDN",
+        "SE-1",
+        "SE-2",
+        "SE-4",
         "DE-HY",
+        "DE-2 🇩🇪",
         "DE-SS 🇩🇪"
       ],
       "default": "auto"
