@@ -1,273 +1,46 @@
 {
-  "log": {
-    "level": "warn"
-  },
+  "log": { "level": "warn", "timestamp": true },
   "dns": {
     "servers": [
-      {
-        "type": "udp",
-        "tag": "local",
-        "server": "223.5.5.5"
-      },
-      {
-        "type": "https",
-        "tag": "remote",
-        "server": "1.1.1.1",
-        "detour": "proxy"
-      }
+      { "tag": "proxy-dns", "address": "tls://1.1.1.1", "detour": "select" },
+      { "tag": "local-dns", "address": "https://common.dot.dns.yandex.net/dns-query", "detour": "direct" }
     ],
     "rules": [
-      {
-        "rule_set": [
-          "geosite-ru"
-        ],
-        "server": "local"
-      },
-      {
-        "domain_suffix": [
-          "2gis.ru",
-          "aeroflot.ru",
-          "alfabank.com",
-          "alfabank.ru",
-          "alfacapital.ru",
-          "alfadirect.ru",
-          "alfainvestor.ru",
-          "aliexpress.ru",
-          "arbitr.ru",
-          "auto.ru",
-          "aviasales.ru",
-          "avito.ru",
-          "avito.st",
-          "bcs-express.ru",
-          "bcs.ru",
-          "bcsbroker.ru",
-          "bcspremier.ru",
-          "beeline.ru",
-          "broker.vtb.ru",
-          "cbr.ru",
-          "cian.ru",
-          "consultant.ru",
-          "customs.gov.ru",
-          "delivery-club.ru",
-          "domclick.ru",
-          "drom.ru",
-          "dzen.ru",
-          "emias.info",
-          "esia.gosuslugi.ru",
-          "finam.eu",
-          "finam.ru",
-          "finuslugi.ru",
-          "fssp.gov.ru",
-          "fssprus.ru",
-          "garant.ru",
-          "gazprombank.investments",
-          "gazprombank.ru",
-          "gibdd.ru",
-          "gosuslugi.ru",
-          "gpb-am.ru",
-          "gpb.ru",
-          "ivi.ru",
-          "kad.arbitr.ru",
-          "kinopoisk.ru",
-          "kuper.ru",
-          "mail.ru",
-          "megafon.ru",
-          "megamarket.ru",
-          "mkb.ru",
-          "moex.com",
-          "more.tv",
-          "mos-gorsud.ru",
-          "mos.ru",
-          "mosreg.ru",
-          "mts.ru",
-          "mvd.ru",
-          "nalog.gov.ru",
-          "nalog.ru",
-          "nsd.ru",
-          "ok.ru",
-          "okko.tv",
-          "open-am.ru",
-          "open-broker.ru",
-          "open.ru",
-          "ozon.ru",
-          "pfr.gov.ru",
-          "pobeda.aero",
-          "pochtabank.ru",
-          "pravo.gov.ru",
-          "premier.one",
-          "psbank.ru",
-          "psbinvest.ru",
-          "raiffeisen-invest.ru",
-          "raiffeisen.ru",
-          "rosbank.ru",
-          "roskazna.gov.ru",
-          "rosreestr.gov.ru",
-          "rosreestr.ru",
-          "rshb.ru",
-          "rutube.ru",
-          "rzd.ru",
-          "s7.ru",
-          "samokat.ru",
-          "sber-invest.ru",
-          "sber.ru",
-          "sberbank-am.ru",
-          "sberbank.com",
-          "sberbank.ru",
-          "sberinvestor.ru",
-          "sbrf.ru",
-          "sferum.ru",
-          "sfr.gov.ru",
-          "smotrim.ru",
-          "sovcombank.ru",
-          "spbexchange.com",
-          "spbexchange.ru",
-          "start.ru",
-          "sudrf.ru",
-          "tbank.ru",
-          "tcsbank.ru",
-          "tele2.ru",
-          "tinkoff.ru",
-          "tinkoffinvest.ru",
-          "tutu.ru",
-          "uchi.ru",
-          "uralsib.ru",
-          "userapi.com",
-          "utair.ru",
-          "vk-cdn.net",
-          "vk.com",
-          "vk.ru",
-          "vkusvill.ru",
-          "vsrf.ru",
-          "vtb.ru",
-          "vtb24.ru",
-          "vtbcapital.ru",
-          "wb.ru",
-          "wildberries.ru",
-          "wink.ru",
-          "ya.ru",
-          "yandex.net",
-          "yandex.ru",
-          "yastatic.net",
-          "yoomoney.ru",
-          "yota.ru"
-        ],
-        "server": "local"
-      }
+      { "rule_set": ["geosite-ru"], "server": "local-dns" },
+      { "domain_suffix": [".ru", ".su", ".рф", ".moscow", ".tatar", ".spb.ru", ".msk.ru"], "server": "local-dns" }
     ],
-    "final": "remote"
+    "final": "proxy-dns",
+    "strategy": "prefer_ipv4"
   },
   "inbounds": [
     {
       "type": "tun",
       "tag": "tun-in",
-      "address": [
-        "172.19.0.1/30"
-      ],
+      "address": ["172.19.0.1/30"],
       "auto_route": true,
       "strict_route": true,
       "stack": "mixed",
-      "mtu": 1280
+      "sniff": true
     }
   ],
   "outbounds": [
     {
-      "type": "hysteria2",
-      "tag": "DE-2 🇩🇪",
-      "server": "23.88.45.150",
-      "server_port": 36500,
-      "password": "de6b9bbf95152e01487528ace985ec25",
-      "obfs": {
-        "type": "salamander",
-        "password": "906caf1686726648fca71697b531f8b5"
-      },
-      "tls": {
-        "enabled": true,
-        "server_name": "www.microsoft.com",
-        "insecure": true
-      }
+      "type": "selector",
+      "tag": "select",
+      "outbounds": ["auto", "🇸🇪 Швеция 1 (видео)", "🇸🇪 Швеция Hysteria (видео)", "🇩🇪 Германия ЧИСТЫЙ", "🇩🇪 Германия CF"],
+      "default": "auto"
     },
     {
-      "type": "shadowsocks",
-      "tag": "DE-SS 🇩🇪",
-      "server": "23.88.45.150",
-      "server_port": 24816,
-      "method": "2022-blake3-aes-256-gcm",
-      "password": "03Fp0vQrCc2q5K8n/T8LNUVXsM5euFDOKCf230sRPig="
-    },
-    {
-      "type": "hysteria2",
-      "tag": "SE-2",
-      "server": "cdn.axiomagdpr.com",
-      "server_port": 443,
-      "password": "e9b1767f-c544-4a3c-9cf6-192e38d4a781:x05ClFtWnnjyLrmXU8RG",
-      "tls": {
-        "enabled": true,
-        "server_name": "cdn.axiomagdpr.com"
-      }
+      "type": "urltest",
+      "tag": "auto",
+      "outbounds": ["🇸🇪 Швеция 1 (видео)", "🇸🇪 Швеция Hysteria (видео)", "🇩🇪 Германия ЧИСТЫЙ", "🇩🇪 Германия CF"],
+      "url": "https://www.gstatic.com/generate_204",
+      "interval": "3m",
+      "tolerance": 50
     },
     {
       "type": "vless",
-      "tag": "SE-CDN",
-      "server": "vpn.axiomagdpr.com",
-      "server_port": 443,
-      "uuid": "e9b1767f-c544-4a3c-9cf6-192e38d4a781",
-      "tls": {
-        "enabled": true,
-        "server_name": "vpn.axiomagdpr.com",
-        "utls": {
-          "enabled": true,
-          "fingerprint": "chrome"
-        }
-      },
-      "transport": {
-        "type": "ws",
-        "path": "/axws",
-        "headers": {
-          "Host": "vpn.axiomagdpr.com"
-        }
-      }
-    },
-    {
-      "type": "vless",
-      "tag": "DE-CDN",
-      "server": "de.axiomagdpr.com",
-      "server_port": 443,
-      "uuid": "e9b1767f-c544-4a3c-9cf6-192e38d4a781",
-      "tls": {
-        "enabled": true,
-        "server_name": "de.axiomagdpr.com",
-        "utls": {
-          "enabled": true,
-          "fingerprint": "chrome"
-        }
-      },
-      "transport": {
-        "type": "ws",
-        "path": "/dews",
-        "headers": {
-          "Host": "de.axiomagdpr.com"
-        }
-      }
-    },
-    {
-      "type": "hysteria2",
-      "tag": "DE-HY",
-      "server": "23.88.45.150",
-      "server_port": 36500,
-      "password": "de6b9bbf95152e01487528ace985ec25",
-      "obfs": {
-        "type": "salamander",
-        "password": "906caf1686726648fca71697b531f8b5"
-      },
-      "tls": {
-        "enabled": true,
-        "insecure": true,
-        "server_name": "www.microsoft.com"
-      }
-    },
-    {
-      "type": "vless",
-      "tag": "SE-1",
+      "tag": "🇸🇪 Швеция 1 (видео)",
       "server": "172.232.141.118",
       "server_port": 443,
       "uuid": "e9b1767f-c544-4a3c-9cf6-192e38d4a781",
@@ -275,259 +48,101 @@
       "tls": {
         "enabled": true,
         "server_name": "www.tradingview.com",
-        "utls": {
-          "enabled": true,
-          "fingerprint": "chrome"
-        },
-        "reality": {
-          "enabled": true,
-          "public_key": "8iDNAZ-GKANG4TdZsFNVD5Ygm9oqhRxmfdq3BbBFJxw",
-          "short_id": "01264bff5779f4fe"
-        }
+        "utls": { "enabled": true, "fingerprint": "chrome" },
+        "reality": { "enabled": true, "public_key": "8iDNAZ-GKANG4TdZsFNVD5Ygm9oqhRxmfdq3BbBFJxw", "short_id": "01264bff5779f4fe" }
       }
     },
     {
-      "type": "tuic",
-      "tag": "SE-4",
+      "type": "hysteria2",
+      "tag": "🇸🇪 Швеция Hysteria (видео)",
       "server": "cdn.axiomagdpr.com",
-      "server_port": 2053,
+      "server_port": 443,
+      "password": "e9b1767f-c544-4a3c-9cf6-192e38d4a781:x05ClFtWnnjyLrmXU8RG",
+      "tls": { "enabled": true, "server_name": "cdn.axiomagdpr.com" }
+    },
+    {
+      "type": "vless",
+      "tag": "🇩🇪 Германия ЧИСТЫЙ",
+      "server": "5.75.209.100",
+      "server_port": 2096,
       "uuid": "e9b1767f-c544-4a3c-9cf6-192e38d4a781",
-      "password": "So09iZWa9S3nxNCbDde8",
-      "congestion_control": "bbr",
-      "tls": {
-        "enabled": true,
-        "server_name": "cdn.axiomagdpr.com",
-        "alpn": [
-          "h3"
-        ]
-      }
+      "tls": { "enabled": true, "server_name": "de2.axiomagdpr.com", "utls": { "enabled": true, "fingerprint": "chrome" } },
+      "transport": { "type": "ws", "path": "/de2ws", "headers": { "Host": "de2.axiomagdpr.com" } }
     },
     {
-      "type": "urltest",
-      "tag": "auto",
-      "outbounds": [
-        "SE-CDN",
-        "DE-CDN",
-        "SE-1",
-        "SE-2",
-        "SE-4",
-        "DE-HY",
-        "DE-2 🇩🇪",
-        "DE-SS 🇩🇪"
-      ],
-      "url": "https://www.gstatic.com/generate_204",
-      "interval": "1m",
-      "tolerance": 120,
-      "idle_timeout": "30m"
+      "type": "vless",
+      "tag": "🇩🇪 Германия CF",
+      "server": "cf.axiomagdpr.com",
+      "server_port": 443,
+      "uuid": "e9b1767f-c544-4a3c-9cf6-192e38d4a781",
+      "tls": { "enabled": true, "server_name": "cf.axiomagdpr.com", "utls": { "enabled": true, "fingerprint": "chrome" } },
+      "transport": { "type": "ws", "path": "/dews", "headers": { "Host": "cf.axiomagdpr.com" } }
     },
-    {
-      "type": "selector",
-      "tag": "proxy",
-      "outbounds": [
-        "auto",
-        "SE-CDN",
-        "DE-CDN",
-        "SE-1",
-        "SE-2",
-        "SE-4",
-        "DE-HY",
-        "DE-2 🇩🇪",
-        "DE-SS 🇩🇪"
-      ],
-      "default": "auto"
-    },
-    {
-      "type": "direct",
-      "tag": "direct"
-    }
+    { "type": "direct", "tag": "direct" }
   ],
   "route": {
-    "rule_set": [
-      {
-        "tag": "geosite-ru",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ru.srs",
-        "download_detour": "direct"
-      },
-      {
-        "tag": "geoip-ru",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-ru.srs",
-        "download_detour": "direct"
-      }
-    ],
-    "default_domain_resolver": {
-      "server": "local"
-    },
     "rules": [
+      { "action": "sniff" },
+      { "protocol": "dns", "action": "hijack-dns" },
+      { "ip_is_private": true, "outbound": "direct" },
       {
-        "action": "sniff"
-      },
-      {
-        "protocol": "dns",
-        "action": "hijack-dns"
-      },
-      {
-        "protocol": "quic",
-        "action": "reject"
-      },
-      {
-        "ip_is_private": true,
-        "outbound": "direct"
-      },
-      {
-        "domain_suffix": [
-          "2gis.ru",
-          "aeroflot.ru",
-          "alfabank.com",
-          "alfabank.ru",
-          "alfacapital.ru",
-          "alfadirect.ru",
-          "alfainvestor.ru",
-          "aliexpress.ru",
-          "arbitr.ru",
-          "auto.ru",
-          "aviasales.ru",
-          "avito.ru",
-          "avito.st",
-          "bcs-express.ru",
-          "bcs.ru",
-          "bcsbroker.ru",
-          "bcspremier.ru",
-          "beeline.ru",
-          "broker.vtb.ru",
-          "cbr.ru",
-          "cian.ru",
-          "consultant.ru",
-          "customs.gov.ru",
-          "delivery-club.ru",
-          "domclick.ru",
-          "drom.ru",
-          "dzen.ru",
-          "emias.info",
-          "esia.gosuslugi.ru",
-          "finam.eu",
-          "finam.ru",
-          "finuslugi.ru",
-          "fssp.gov.ru",
-          "fssprus.ru",
-          "garant.ru",
-          "gazprombank.investments",
-          "gazprombank.ru",
-          "gibdd.ru",
-          "gosuslugi.ru",
-          "gpb-am.ru",
-          "gpb.ru",
-          "ivi.ru",
-          "kad.arbitr.ru",
-          "kinopoisk.ru",
-          "kuper.ru",
-          "mail.ru",
-          "megafon.ru",
-          "megamarket.ru",
-          "mkb.ru",
-          "moex.com",
-          "more.tv",
-          "mos-gorsud.ru",
-          "mos.ru",
-          "mosreg.ru",
-          "mts.ru",
-          "mvd.ru",
-          "nalog.gov.ru",
-          "nalog.ru",
-          "nsd.ru",
-          "ok.ru",
-          "okko.tv",
-          "open-am.ru",
-          "open-broker.ru",
-          "open.ru",
-          "ozon.ru",
-          "pfr.gov.ru",
-          "pobeda.aero",
-          "pochtabank.ru",
-          "pravo.gov.ru",
-          "premier.one",
-          "psbank.ru",
-          "psbinvest.ru",
-          "raiffeisen-invest.ru",
-          "raiffeisen.ru",
-          "rosbank.ru",
-          "roskazna.gov.ru",
-          "rosreestr.gov.ru",
-          "rosreestr.ru",
-          "rshb.ru",
-          "rutube.ru",
-          "rzd.ru",
-          "s7.ru",
-          "samokat.ru",
-          "sber-invest.ru",
-          "sber.ru",
-          "sberbank-am.ru",
-          "sberbank.com",
-          "sberbank.ru",
-          "sberinvestor.ru",
-          "sbrf.ru",
-          "sferum.ru",
-          "sfr.gov.ru",
-          "smotrim.ru",
-          "sovcombank.ru",
-          "spbexchange.com",
-          "spbexchange.ru",
-          "start.ru",
-          "sudrf.ru",
-          "tbank.ru",
-          "tcsbank.ru",
-          "tele2.ru",
-          "tinkoff.ru",
-          "tinkoffinvest.ru",
-          "tutu.ru",
-          "uchi.ru",
-          "uralsib.ru",
-          "userapi.com",
-          "utair.ru",
-          "vk-cdn.net",
-          "vk.com",
-          "vk.ru",
-          "vkusvill.ru",
-          "vsrf.ru",
-          "vtb.ru",
-          "vtb24.ru",
-          "vtbcapital.ru",
-          "wb.ru",
-          "wildberries.ru",
-          "wink.ru",
-          "ya.ru",
-          "yandex.net",
-          "yandex.ru",
-          "yastatic.net",
-          "yoomoney.ru",
-          "yota.ru"
+        "package_name": [
+          "ru.sberbankmobile", "ru.sberbankmobile.gp", "ru.sberbank_sbbol", "ru.sber.id", "ru.sberdevices.salute", "ru.sbermegamarket.app", "ru.domclick.mobile", "ru.sberbank.spasibo", "ru.sberbankmobile.partner",
+          "com.idamob.tinkoff.android", "com.tinkoff.investing", "ru.tinkoff.sme", "com.tinkoff.gorod",
+          "ru.vtb24.mobilebanking.android", "ru.vtb.mobilebank",
+          "ru.alfabank.mobile.android", "ru.alfabank.oavdo.amc", "ru.alfastrah.mobile",
+          "ru.gazprombank.android.mobilebank.app",
+          "ru.raiffeisennews", "ru.raiffeisen.mobile.new",
+          "ru.psbank.mobile", "ru.sovcombank.halva", "ru.mkb.mobile", "ru.rshb.dbo", "ru.uralsib.mobile", "ru.rosbank.android", "ru.homecredit.evo", "ru.pochta.bank", "ru.akbars.mobile", "ru.bcs.mobile", "ru.otpbank.mobile", "ru.unicredit.mobile",
+          "ru.mts.money", "ru.mtsbank.mobile", "ru.yoo.money", "com.openbank", "ru.bank.ozon",
+          "ru.gosuslugi.mp", "ru.rostel", "ru.fns.billing", "com.nalog.lkfl2", "ru.fns.mp", "ru.fssprus.app",
+          "ru.emias.emiasapp", "ru.mos.app", "ru.mos.polls", "ru.gibdd.app", "ru.minsport.gto", "ru.mos.dnevnik", "ru.gswp.android",
+          "ru.cprfid.smartid", "ru.CryptoPro.myDss",
+          "ru.rzd.pass.app", "ru.rzd.app", "aero.pobeda.app", "com.aeroflot.aeroflot", "ru.s7.app", "com.utair.uta", "ru.tutu.app", "com.aviasales", "ru.pochta.pochtaapp",
+          "ru.ozon.app.android", "ru.ozon.travel", "com.wildberries.ru", "ru.dnp.app", "ru.avito.app", "com.allgoritm.youla", "ru.cian.main", "ru.lamoda.android", "ru.mvideo.android", "ru.eldorado.android", "ru.citilink.android", "ru.vseinstrumenti", "ru.petrovich.app", "com.leroymerlin.app", "ru.sima_land.android",
+          "ru.kinopoisk", "ru.ivi.client", "tv.okko.androidtv", "one.premier.androidtv", "ru.more.play", "ru.start.androidmobile", "ru.rt.video.app.mobile", "com.rostelecom.zabava", "ru.kion.app", "ru.vgtrk.smotrim",
+          "ru.yandex.taxi", "ru.yandex.market", "ru.yandex.yandexmaps", "ru.yandex.searchplugin", "ru.yandex.mail", "ru.yandex.disk", "ru.yandex.music", "ru.yandex.weatherplugin", "ru.yandex.yandexnavi", "ru.yandex.afisha", "com.yandex.zen", "ru.yandex.drive", "ru.beru.android", "ru.foodfox.client", "ru.yandex.uber",
+          "com.vkontakte.android", "ru.mail.mailapp", "ru.ok.android", "ru.rutube.app", "com.vk.im", "com.vk.music", "ru.vk.store", "com.vkontakte.calls", "ru.mail.cloud", "ru.mail.search.electroscope",
+          "ru.megafon.mlk", "ru.beeline.services", "ru.tele2.mytele2", "ru.mts.mtstv",
+          "com.delimobil", "ru.citydrive", "ru.belkacar", "ru.whoosh", "ru.urentbike.app",
+          "ru.vkusvill", "com.perekrestok.app", "ru.pyaterochka", "ru.magnit.mobile", "com.lenta.app", "ru.okeydostavka", "ru.metro_cc.mlk", "ru.samokat.client", "ru.kuper.client", "ru.dixy.app", "ru.apteka.app", "ru.eapteka.app", "ru.zdravcity",
+          "ru.rgs.app", "ru.ingos.osago", "ru.sogaz.mobile", "ru.reso.mobile", "ru.vsk.app", "ru.renins.mobile", "ru.sberbank.insurance",
+          "ru.prodoctorov", "ru.napopravku", "com.docdoc.android", "ru.sberhealth.android", "ru.gms.kuban",
+          "ru.dnevnik.app", "ru.uchi.app", "ru.yaklass", "ru.sferum.app",
+          "ru.drom.android", "ru.auto.ara", "com.zhiliaoapp.dzen", "ru.hh.android", "ru.superjob.client", "ru.2gis.app", "com.gismeteo.gismeteo",
+          "ru.max.messenger", "chat.tamtam"
         ],
         "outbound": "direct"
       },
       {
         "domain_suffix": [
-          ".ru",
-          ".рф"
+          ".ru", ".su", ".рф", ".moscow", ".tatar", ".spb.ru", ".msk.ru", ".org.ru", ".net.ru", ".com.ru", ".krasnodar.ru", ".sochi.ru", ".nnov.ru", ".nsk.ru",
+          "yandex.net", "yastatic.net", "yandexcloud.net", "yandex-team.ru", "ya.cc", "yadi.sk", "kinopoisk.ru", "kinopoisk.vip", "yandexsport.ru", "yandextaxi.com", "yango.com", "edadeal.ru", "kp.ru", "appmetrica.yandex", "mcdn.yandex.net", "storage.yandexcloud.net", "passport.yandex.ru", "music.yandex.ru", "afisha.yandex.ru", "zen.yandex.ru", "alice.yandex.ru",
+          "userapi.com", "vk.cc", "vk-cdn.net", "vkuser.net", "vkuservideo.net", "vkuservideo.com", "vkuserlive.net", "mycdn.me", "vkplay.ru", "vkplay.live", "vkvideo.ru", "vkgroup.net", "vk-portal.net", "vkforms.ru", "vkmessenger.com", "mail.ru", "imgsmail.ru", "list.ru", "bk.ru", "inbox.ru", "mradar.ru", "dzeninfra.ru", "dzen.ru", "rutube.ru", "rutubelist.ru", "okcdn.ru", "odnoklassniki.ru", "ok.ru", "vkuserphoto.com",
+          "sberbank.ru", "sber.ru", "sbrf.ru", "sberbank.com", "sberdevices.ru", "sbercloud.ru", "salutejazz.ru", "gigachat.ru", "sbermarket.ru", "sbermegamarket.ru", "megamarket.ru", "domclick.ru", "sberauto.com", "sberhealth.ru", "sberspasibo.ru", "sberprime.ru", "sberbank-insurance.ru", "sberid.ru",
+          "tinkoff.ru", "tbank.ru", "tcsbank.ru", "tinkoffinsurance.ru", "cdn-tinkoff.ru", "tinkoffjournal.ru", "vtb.ru", "vtb24.ru", "vtb-bank.ru", "alfabank.ru", "alfabank.com", "alfacapital.ru", "gazprombank.ru", "gpb.ru", "raiffeisen.ru", "raif.ru", "open.ru", "psbank.ru", "pochtabank.ru", "sovcombank.ru", "halvacard.ru", "mkb.ru", "rshb.ru", "uralsib.ru", "rosbank.ru", "homecredit.ru", "akbars.ru", "bcs.ru", "otpbank.ru", "citibank.ru", "ozon.bank", "yoomoney.ru", "yookassa.ru", "qiwi.com", "nspk.ru", "mironline.ru", "sbp.nspk.ru", "robokassa.ru", "cloudpayments.ru", "tochka.com", "modulbank.ru", "raschet.ru",
+          "ozon.ru", "ozone.ru", "ozonru.me", "ozon.travel", "wildberries.ru", "wb.ru", "wbbasket.ru", "wildberries.com", "wbstatic.net", "wbcontent.net", "avito.ru", "avito.st", "avito.tech", "dns-shop.ru", "mvideo.ru", "eldorado.ru", "citilink.ru", "lamoda.ru", "lamodacdn.ru", "aliexpress.ru", "kuper.ru", "samokat.ru", "vseinstrumenti.ru", "petrovich.ru", "leroymerlin.ru", "lemanapro.ru", "sima-land.ru", "youla.ru", "cian.ru", "domofond.ru", "auto.ru", "drom.ru", "irr.ru", "metro-cc.ru", "vkusvill.ru", "perekrestok.ru", "5ka.ru", "pyaterochka.ru", "magnit.ru", "lenta.com", "okeydostavka.ru", "dixy.ru", "apteka.ru", "eapteka.ru", "rigla.ru", "zdravcity.ru", "asna.ru",
+          "delivery-club.ru", "dostavista.ru", "youdo.com", "profi.ru", "2gis.ru", "2gis.com", "gismeteo.ru", "delimobil.ru", "citydrive.ru", "belkacar.ru", "youdrive.today", "whoosh.bike", "urentbike.ru", "urent.ru",
+          "ivi.ru", "okko.tv", "okko.sport", "premier.one", "more.tv", "start.ru", "wink.ru", "kion.ru", "smotrim.ru", "1tv.ru", "ntv.ru", "tvigle.ru", "amediateka.ru", "zvuk.com", "sberzvuk.com",
+          "mts.ru", "mtsbank.ru", "beeline.ru", "megafon.ru", "tele2.ru", "rostelecom.ru", "rt.ru", "yota.ru",
+          "gosuslugi.ru", "gosuslugi.gov.ru", "esia.gosuslugi.ru", "dom.gosuslugi.ru", "mos.ru", "pgu.mos.ru", "emias.info", "emias.mos.ru", "parking.mos.ru", "transport.mos.ru", "school.mos.ru", "data.mos.ru", "nalog.ru", "nalog.gov.ru", "lkfl2.nalog.ru", "npd.nalog.ru", "pfr.gov.ru", "sfr.gov.ru", "fss.ru", "rosreestr.ru", "rosreestr.gov.ru", "gibdd.ru", "mvd.ru", "sudrf.ru", "pravo.gov.ru", "fssp.gov.ru", "fssprus.ru", "mintsifry.ru", "mos.ru", "mosreg.ru", "gov.spb.ru", "tatarstan.ru", "krasnodar.ru", "rkn.gov.ru", "minzdrav.gov.ru", "rospotrebnadzor.ru", "cbr.ru", "roskazna.gov.ru",
+          "rzd.ru", "rzd-bonus.ru", "aeroflot.ru", "pobeda.aero", "s7.ru", "utair.ru", "rossiya-airlines.com", "tutu.ru", "aviasales.ru", "level.travel", "ozon.travel", "tutu.travel",
+          "hh.ru", "headhunter.ru", "superjob.ru", "rabota.ru", "sferum.ru", "edu.gov.ru", "uchi.ru", "yaklass.ru", "dnevnik.ru", "rutoken.ru", "moeobrazovanie.ru",
+          "rgs.ru", "ingos.ru", "sogaz.ru", "reso.ru", "alfastrah.ru", "sberinsure.ru", "vsk.ru", "renins.ru", "rsa.su", "autoins.ru",
+          "prodoctorov.ru", "napopravku.ru", "docdoc.ru", "sberhealth.ru", "zdravita.ru", "gemotest.ru", "invitro.ru", "helix.ru", "kdl.ru",
+          "ria.ru", "tass.ru", "rbc.ru", "lenta.ru", "kommersant.ru", "gazeta.ru", "iz.ru", "vedomosti.ru", "fontanka.ru", "e1.ru", "pikabu.ru", "habr.com", "vc.ru", "championat.com", "sports.ru", "sportbox.ru", "matchtv.ru",
+          "kaspersky.ru", "kaspersky.com", "1c.ru", "1cbit.ru", "myoffice.ru", "astralinux.ru", "cryptopro.ru", "consultant.ru", "garant.ru", "rusprofile.ru", "list-org.com", "zachestnyibiznes.ru",
+          "max.ru", "tamtam.chat", "icq.com", "rambler.ru", "championat.ru"
         ],
         "outbound": "direct"
       },
-      {
-        "rule_set": [
-          "geosite-ru",
-          "geoip-ru"
-        ],
-        "outbound": "direct"
-      }
+      { "rule_set": ["geoip-ru", "geosite-ru"], "outbound": "direct" }
     ],
-    "final": "proxy",
+    "rule_set": [
+      { "type": "remote", "tag": "geosite-ru", "format": "binary", "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ru.srs", "download_detour": "select" },
+      { "type": "remote", "tag": "geoip-ru", "format": "binary", "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-ru.srs", "download_detour": "select" }
+    ],
+    "final": "select",
     "auto_detect_interface": true
-  },
-  "experimental": {
-    "cache_file": {
-      "enabled": true
-    }
   }
 }
