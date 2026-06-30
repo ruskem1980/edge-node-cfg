@@ -27,20 +27,20 @@
     {
       "type": "selector",
       "tag": "select",
-      "outbounds": ["auto", "🇸🇪 Швеция 1 (видео)", "🇸🇪 Швеция Hysteria (видео)", "🇩🇪 Германия ЧИСТЫЙ", "🇩🇪 Германия CF"],
+      "outbounds": ["auto", "🇸🇪 Швеция 1", "🇸🇪 Швеция Hysteria", "🇩🇪 Германия ЧИСТЫЙ", "🇩🇪 Германия CF"],
       "default": "auto"
     },
     {
       "type": "urltest",
       "tag": "auto",
-      "outbounds": ["🇸🇪 Швеция 1 (видео)", "🇸🇪 Швеция Hysteria (видео)", "🇩🇪 Германия ЧИСТЫЙ", "🇩🇪 Германия CF"],
+      "outbounds": ["🇸🇪 Швеция 1", "🇸🇪 Швеция Hysteria", "🇩🇪 Германия ЧИСТЫЙ", "🇩🇪 Германия CF"],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "3m",
       "tolerance": 50
     },
     {
       "type": "vless",
-      "tag": "🇸🇪 Швеция 1 (видео)",
+      "tag": "🇸🇪 Швеция 1",
       "server": "172.232.141.118",
       "server_port": 443,
       "uuid": "d985afff-fdc9-42e9-948a-1569b262c37e",
@@ -54,7 +54,7 @@
     },
     {
       "type": "hysteria2",
-      "tag": "🇸🇪 Швеция Hysteria (видео)",
+      "tag": "🇸🇪 Швеция Hysteria",
       "server": "cdn.axiomagdpr.com",
       "server_port": 443,
       "password": "d985afff-fdc9-42e9-948a-1569b262c37e:YfQ8AMUjqtTOisXrGmS5",
